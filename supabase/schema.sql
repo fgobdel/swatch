@@ -8,6 +8,7 @@
 create table if not exists profiles (
   id uuid primary key default gen_random_uuid(),
   username text unique not null,
+  secret_word text,  -- the lightweight "no password, just a secret word" login
   created_at timestamptz not null default now()
 );
 

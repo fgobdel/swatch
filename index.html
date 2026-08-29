@@ -33,11 +33,20 @@
     <form id="login-form">
       <label for="username">Username</label>
       <input type="text" id="username" placeholder="e.g. glossygigi" autocomplete="off">
+
+      <div id="secret-group" style="display:none;">
+        <label for="secret" id="secret-label">Secret word</label>
+        <input type="text" id="secret" placeholder="" autocomplete="off">
+        <div style="text-align:left; margin-top:-8px;">
+          <a href="#" id="back-link" style="font-size:0.78rem; color:var(--ink-faint); text-decoration:underline;">‹ different username</a>
+        </div>
+      </div>
+
       <div class="field-error" id="username-error" style="display:none;"></div>
       <button type="submit" id="login-submit" class="btn btn-primary btn-block">Continue</button>
     </form>
 
-    <div class="login-foot">No password needed. First time? Pick any username and we'll create it.<br>Used it before — even on another device? Type it again to get right back to your board and sets.</div>
+    <div class="login-foot" id="login-hint">No password — just a username and a short secret word only you know.<br>First time? We'll help you set one up.</div>
   </div>
 </div>
 
