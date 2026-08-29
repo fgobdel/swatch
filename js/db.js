@@ -9,16 +9,6 @@ function publicUrlFor(path) {
 
 // ---------- profiles / login ----------
 
-async function isUsernameTaken(username) {
-  const { data, error } = await sb
-    .from("profiles")
-    .select("id")
-    .eq("username", username)
-    .maybeSingle();
-  if (error) throw error;
-  return !!data;
-}
-
 async function createProfile(username) {
   const { data, error } = await sb
     .from("profiles")
@@ -27,6 +17,20 @@ async function createProfile(username) {
     .single();
   if (error) throw error;
   return data;
+}
+
+// Typing an existing username signs you back into that same account
+// (there's no password, so this is what "log in on another device" means
+// here) — a new username creates a fresh profile.
+async function findOrCreateProfile(username) {
+  const { data: existing, error } = await sb
+    .from("profiles")
+    .select("*")
+    .eq("username", username)
+    .maybeSingle();
+  if (error) throw error;
+  if (existing) return existing;
+  return await createProfile(username);
 }
 
 // ---------- board ----------

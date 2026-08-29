@@ -35,12 +35,7 @@
     showError(null);
 
     try {
-      const taken = await isUsernameTaken(username);
-      if (taken) {
-        showError("That username is already taken — try another.");
-        return;
-      }
-      const profile = await createProfile(username);
+      const profile = await findOrCreateProfile(username);
       setSession(profile);
       window.location.href = "board.html";
     } catch (err) {
