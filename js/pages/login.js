@@ -29,10 +29,6 @@
       showError("Enter a username to continue.");
       return;
     }
-    if (!/^[a-z0-9_.-]{3,20}$/.test(username)) {
-      showError("Use 3–20 letters, numbers, periods, underscores, or hyphens.");
-      return;
-    }
 
     submitBtn.disabled = true;
     submitBtn.textContent = "Checking…";
