@@ -9,7 +9,6 @@
 <body>
 
 <div class="login-wrap">
-  <!-- corner florals -->
   <svg class="corner-floral floral" style="top:6%;left:5%;width:80px;transform:rotate(-15deg);" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="60" cy="40" r="16"/>
     <circle cx="79" cy="54" r="16"/>
@@ -31,18 +30,21 @@
     <div class="brand script">Swatch</div>
     <div class="tagline">plan your next set, save what you love</div>
 
-    <form action="board.html">
+    <form id="login-form">
       <label for="username">Username</label>
-      <input type="text" id="username" placeholder="e.g. glossygigi" value="">
-      <button type="submit" class="btn btn-primary btn-block">Continue</button>
+      <input type="text" id="username" placeholder="e.g. glossygigi" autocomplete="off">
+      <div class="field-error" id="username-error" style="display:none;"></div>
+      <button type="submit" id="login-submit" class="btn btn-primary btn-block">Continue</button>
     </form>
 
-    <div class="login-foot">No password needed — new usernames are created automatically.<br>
-      <a href="login-error.html" style="text-decoration:underline; color: var(--ink-faint);">preview: username taken →</a>
-    </div>
+    <div class="login-foot">No password needed — new usernames are created automatically.<br>Usernames must be unique, and there's no way to recover one, so pick something memorable.</div>
   </div>
 </div>
 
-<div class="mockup-badge">Stage 1 · Static Mockup</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/db.js"></script>
+<script src="js/pages/login.js"></script>
 </body>
 </html>

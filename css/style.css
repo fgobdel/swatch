@@ -256,10 +256,12 @@ p { line-height: 1.5; color: var(--ink-soft); }
 }
 .pin:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 
-.pin .ph {
+.pin .ph, .pin img {
   width: 100%;
   display: block;
+  object-fit: cover;
 }
+.pin.sortable-ghost { opacity: 0.4; }
 .pin-overlay {
   position: absolute;
   inset: 0;

@@ -24,7 +24,7 @@
     <a href="board.html" class="active">Board</a>
     <a href="sets.html">Sets</a>
   </nav>
-  <div class="user-chip"><div class="avatar">G</div> glossygigi</div>
+  <div class="user-chip"><div class="avatar">G</div><span class="user-chip-name">…</span></div>
 </div>
 
 <div class="page">
@@ -34,42 +34,51 @@
       <div class="subtitle">All your favorite nail inspo, saved in one place</div>
     </div>
     <div class="header-actions">
-      <a href="add-image.html" class="btn btn-primary">+ Add Image</a>
+      <label for="file-input" class="btn btn-primary">+ Add Image</label>
+      <input type="file" id="file-input" accept="image/*" multiple style="display:none;">
     </div>
   </div>
 
   <div class="board-toolbar">
-    <span class="board-count">18 saved designs · drag to reorder</span>
-    <a href="board-empty.html" style="font-size:0.8rem; color:var(--ink-faint); text-decoration:underline;">preview: empty board →</a>
+    <span class="board-count" id="board-count"></span>
   </div>
 
-  <div class="masonry">
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#f6c9de,#f3e3c2); height:230px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3c-4 3-7 6-7 10a7 7 0 0014 0c0-4-3-7-7-10z"/></svg></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
+  <div id="board-loading" style="color:var(--ink-faint); padding:20px 0;">Loading your board…</div>
+  <div class="masonry" id="masonry" style="display:none;"></div>
 
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#f9e4a8,#f6c9de); height:310px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
-
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#e3c9f6,#f9e4a8); height:190px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
-
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#f6c9de,#c9e4f6); height:270px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
-
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#f9e4a8,#e3c9f6); height:220px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
-
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#c9f6e0,#f6c9de); height:340px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
-
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#f6c9de,#f9e4a8); height:200px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
-
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#f3e3c2,#e3c9f6); height:250px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
-
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#c9e4f6,#f9e4a8); height:300px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
-
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#f6c9de,#c9f6e0); height:210px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
-
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#f9e4a8,#f6c9de); height:260px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
-
-    <div class="pin"><div class="ph" style="--g: linear-gradient(150deg,#e3c9f6,#c9e4f6); height:230px;"></div><a href="delete-image-confirm.html" class="pin-overlay" style="position:absolute;inset:0;"><span class="drag-handle">⠿</span><span class="pin-actions"><span class="icon-btn">🗑</span></span></a></div>
+  <div class="empty-state" id="empty-state" style="display:none; margin-top:40px;">
+    <svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="60" cy="40" r="16"/><circle cx="79" cy="54" r="16"/><circle cx="72" cy="76" r="16"/>
+      <circle cx="48" cy="76" r="16"/><circle cx="41" cy="54" r="16"/><circle cx="60" cy="60" r="9" fill="var(--flower-center, #fdf6ef)"/>
+    </svg>
+    <h2>Nothing here yet</h2>
+    <p>Save nail art you love to build your inspiration board — add your first design to get started.</p>
+    <label for="file-input" class="btn btn-primary">+ Add your first design</label>
   </div>
 </div>
 
-<div class="mockup-badge">Stage 1 · Static Mockup</div>
+<!-- Delete confirmation modal (hidden until a trash icon is clicked) -->
+<div class="backdrop" id="delete-modal" style="display:none;">
+  <div class="modal">
+    <div class="modal-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+    </div>
+    <h2>Delete this design?</h2>
+    <p>This will remove it from your board permanently. This can't be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="delete-cancel">Cancel</button>
+      <button class="btn btn-danger solid" id="delete-confirm">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="mockup-badge" id="save-status" style="display:none;">Saving…</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/db.js"></script>
+<script src="js/pages/board.js"></script>
 </body>
 </html>
