@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swatch — Add Image</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="topnav">
+  <a href="board.html" class="logo script">Swatch</a>
+  <nav>
+    <a href="board.html">Board</a>
+    <a href="sets.html" class="active">Sets</a>
+  </nav>
+  <div class="user-chip"><div class="avatar">G</div> glossygigi</div>
+</div>
+
+<div class="page" style="max-width:720px;">
+  <a href="set-detail.html" class="back-link">‹ Back to Summer Vacay - July 2026</a>
+  <div class="page-header">
+    <div>
+      <h1 class="script">Add an Image</h1>
+      <div class="subtitle">Upload a photo or sketch for this nail, or pick one from your board</div>
+    </div>
+  </div>
+
+  <span class="context-chip">💅 Adding to: Left Thumb</span>
+
+  <div class="tabs">
+    <input type="radio" name="addtab2" id="tab-upload" checked>
+    <label for="tab-upload">Upload New</label>
+    <input type="radio" name="addtab2" id="tab-board">
+    <label for="tab-board">Choose from Board</label>
+  </div>
+
+  <div class="panels">
+    <div class="tab-panel" id="panel-upload">
+      <div class="dropzone">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        <div><strong>Drag & drop a photo or sketch here</strong></div>
+        <div class="or">— or —</div>
+        <span class="btn btn-secondary btn-sm">Browse files</span>
+      </div>
+      <p style="margin-top:14px; font-size:0.8rem;">Photos uploaded here are automatically saved to your Board too.</p>
+    </div>
+
+    <div class="tab-panel" id="panel-board">
+      <div class="pick-grid">
+        <div class="pick-tile"><div class="ph" style="--g: linear-gradient(150deg,#f6c9de,#f3e3c2); height:100%;"></div><div class="check">✓</div></div>
+        <div class="pick-tile"><div class="ph" style="--g: linear-gradient(150deg,#f9e4a8,#f6c9de); height:100%;"></div><div class="check">✓</div></div>
+        <div class="pick-tile selected"><div class="ph" style="--g: linear-gradient(150deg,#e3c9f6,#f9e4a8); height:100%;"></div><div class="check">✓</div></div>
+        <div class="pick-tile"><div class="ph" style="--g: linear-gradient(150deg,#f6c9de,#c9e4f6); height:100%;"></div><div class="check">✓</div></div>
+        <div class="pick-tile"><div class="ph" style="--g: linear-gradient(150deg,#c9f6e0,#f6c9de); height:100%;"></div><div class="check">✓</div></div>
+        <div class="pick-tile"><div class="ph" style="--g: linear-gradient(150deg,#f9e4a8,#e3c9f6); height:100%;"></div><div class="check">✓</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-footer">
+    <a href="set-detail.html" class="btn btn-ghost">Cancel</a>
+    <a href="crop.html" class="btn btn-primary">Next: Crop →</a>
+  </div>
+</div>
+
+<div class="mockup-badge">Stage 1 · Static Mockup</div>
+</body>
+</html>

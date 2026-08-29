@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swatch — New Set</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="topnav">
+  <a href="board.html" class="logo script">Swatch</a>
+  <nav>
+    <a href="board.html">Board</a>
+    <a href="sets.html" class="active">Sets</a>
+  </nav>
+  <div class="user-chip"><div class="avatar">G</div> glossygigi</div>
+</div>
+
+<div class="page" style="max-width:600px;">
+  <a href="sets.html" class="back-link">‹ All Sets</a>
+
+  <div class="card form-card">
+    <h2 class="script">Start a New Set</h2>
+    <div class="subtitle">Give it a name — you can fill in the nails next</div>
+
+    <form action="set-detail-empty.html">
+      <div class="form-group">
+        <label for="setname">Set Name</label>
+        <input type="text" id="setname" placeholder="e.g. Summer Vacay - July 2026">
+      </div>
+      <div class="form-group">
+        <label for="setnotes">Notes (optional)</label>
+        <textarea id="setnotes" rows="3" placeholder="e.g. ask for gel not acrylic"></textarea>
+      </div>
+      <div class="form-actions">
+        <a href="sets.html" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">Create Set</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="mockup-badge">Stage 1 · Static Mockup</div>
+</body>
+</html>
