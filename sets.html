@@ -14,7 +14,7 @@
     <a href="board.html">Board</a>
     <a href="sets.html" class="active">Sets</a>
   </nav>
-  <div class="user-chip"><div class="avatar">G</div> glossygigi</div>
+  <div class="user-chip"><div class="avatar">G</div><span class="user-chip-name">…</span></div>
 </div>
 
 <div class="page">
@@ -28,88 +28,24 @@
     </div>
   </div>
 
-  <div style="margin-bottom:16px;">
-    <a href="sets-empty.html" style="font-size:0.8rem; color:var(--ink-faint); text-decoration:underline;">preview: no sets yet →</a>
-  </div>
+  <div id="sets-loading" style="color:var(--ink-faint); padding:20px 0;">Loading your sets…</div>
+  <div class="sets-list" id="sets-list" style="display:none;"></div>
 
-  <div class="sets-list">
-    <a href="set-detail.html" class="card set-card">
-      <div class="set-thumb">
-        <div class="ph" style="--g: linear-gradient(150deg,#f6c9de,#f9e4a8);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#e3c9f6,#c9e4f6);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#f3e3c2,#f6c9de);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#c9f6e0,#f9e4a8);"></div>
-      </div>
-      <div class="set-card-body">
-        <h3>Summer Vacay - July 2026</h3>
-        <div class="note">ask for gel not acrylic</div>
-        <div class="set-meta"><span class="chip">8/10 filled</span><span>· edited 2 days ago</span></div>
-      </div>
-      <button class="star-btn active">★</button>
-    </a>
-
-    <a href="set-detail.html" class="card set-card">
-      <div class="set-thumb">
-        <div class="ph" style="--g: linear-gradient(150deg,#c9f6e0,#f6c9de);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#f9e4a8,#e3c9f6);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#f3e3c2,#e3c9f6);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#c9e4f6,#f9e4a8);"></div>
-      </div>
-      <div class="set-card-body">
-        <h3>Halloween Chrome</h3>
-        <div class="note">spiderweb accent nail on ring fingers</div>
-        <div class="set-meta"><span class="chip">10/10 filled</span><span>· edited 5 days ago</span></div>
-      </div>
-      <button class="star-btn active">★</button>
-    </a>
-
-    <a href="set-detail-empty.html" class="card set-card">
-      <div class="set-thumb">
-        <div class="ph" style="--g: linear-gradient(150deg,#f9e4a8,#f6c9de);"></div>
-        <div style="background:var(--pink-soft);"></div>
-        <div style="background:var(--pink-soft);"></div>
-        <div style="background:var(--pink-soft);"></div>
-      </div>
-      <div class="set-card-body">
-        <h3>Fall Chrome Idea</h3>
-        <div class="note">just started — need to pick base color</div>
-        <div class="set-meta"><span class="chip">1/10 filled</span><span>· edited today</span></div>
-      </div>
-      <button class="star-btn">☆</button>
-    </a>
-
-    <a href="set-detail.html" class="card set-card">
-      <div class="set-thumb">
-        <div class="ph" style="--g: linear-gradient(150deg,#f6c9de,#f3e3c2);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#f9e4a8,#f6c9de);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#e3c9f6,#f9e4a8);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#c9e4f6,#f6c9de);"></div>
-      </div>
-      <div class="set-card-body">
-        <h3>Bridal French</h3>
-        <div class="note">clean and classic, subtle shimmer tips</div>
-        <div class="set-meta"><span class="chip">10/10 filled</span><span>· edited 1 week ago</span></div>
-      </div>
-      <button class="star-btn">☆</button>
-    </a>
-
-    <a href="set-detail.html" class="card set-card">
-      <div class="set-thumb">
-        <div class="ph" style="--g: linear-gradient(150deg,#e3c9f6,#f9e4a8);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#f6c9de,#c9e4f6);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#c9f6e0,#f6c9de);"></div>
-        <div class="ph" style="--g: linear-gradient(150deg,#f9e4a8,#f6c9de);"></div>
-      </div>
-      <div class="set-card-body">
-        <h3>Mom's Birthday Set</h3>
-        <div class="note">soft pink ombré, no rhinestones</div>
-        <div class="set-meta"><span class="chip">7/10 filled</span><span>· edited 2 weeks ago</span></div>
-      </div>
-      <button class="star-btn">☆</button>
-    </a>
+  <div class="empty-state" id="empty-state" style="display:none; margin-top:30px;">
+    <svg viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="60" cy="40" r="16"/><circle cx="79" cy="54" r="16"/><circle cx="72" cy="76" r="16"/>
+      <circle cx="48" cy="76" r="16"/><circle cx="41" cy="54" r="16"/><circle cx="60" cy="60" r="9" fill="var(--flower-center, #fdf6ef)"/>
+    </svg>
+    <h2>No sets yet</h2>
+    <p>Plan your first full manicure — pick a name and start filling in nail designs, one finger at a time.</p>
+    <a href="new-set.html" class="btn btn-primary">+ Create your first set</a>
   </div>
 </div>
 
-<div class="mockup-badge">Stage 1 · Static Mockup</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/db.js"></script>
+<script src="js/pages/sets.js"></script>
 </body>
 </html>

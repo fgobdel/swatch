@@ -14,7 +14,7 @@
     <a href="board.html">Board</a>
     <a href="sets.html" class="active">Sets</a>
   </nav>
-  <div class="user-chip"><div class="avatar">G</div> glossygigi</div>
+  <div class="user-chip"><div class="avatar">G</div><span class="user-chip-name">…</span></div>
 </div>
 
 <div class="page" style="max-width:600px;">
@@ -24,7 +24,7 @@
     <h2 class="script">Start a New Set</h2>
     <div class="subtitle">Give it a name — you can fill in the nails next</div>
 
-    <form action="set-detail-empty.html">
+    <form id="new-set-form">
       <div class="form-group">
         <label for="setname">Set Name</label>
         <input type="text" id="setname" placeholder="e.g. Summer Vacay - July 2026">
@@ -33,14 +33,19 @@
         <label for="setnotes">Notes (optional)</label>
         <textarea id="setnotes" rows="3" placeholder="e.g. ask for gel not acrylic"></textarea>
       </div>
+      <div class="field-error" id="create-error" style="display:none; margin-bottom:10px;"></div>
       <div class="form-actions">
         <a href="sets.html" class="btn btn-secondary">Cancel</a>
-        <button type="submit" class="btn btn-primary">Create Set</button>
+        <button type="submit" id="create-submit" class="btn btn-primary">Create Set</button>
       </div>
     </form>
   </div>
 </div>
 
-<div class="mockup-badge">Stage 1 · Static Mockup</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/db.js"></script>
+<script src="js/pages/new-set.js"></script>
 </body>
 </html>
