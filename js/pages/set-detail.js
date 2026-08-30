@@ -124,7 +124,7 @@
         return;
       }
       grid.innerHTML = images
-        .map((img) => `<div class="pick-tile" data-url="${publicUrlFor(img.image_path)}"><img class="ph" style="height:100%;" src="${publicUrlFor(img.image_path)}" alt=""></div>`)
+        .map((img) => `<div class="pick-tile" data-url="${publicUrlFor(img.image_path)}"><img src="${publicUrlFor(img.image_path)}" alt=""></div>`)
         .join("");
       grid.querySelectorAll(".pick-tile").forEach((tile) => {
         tile.addEventListener("click", async () => {

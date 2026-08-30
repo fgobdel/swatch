@@ -663,13 +663,26 @@ textarea:focus, input[type=text]:focus { outline: 2px solid var(--pink-deep); ou
   overflow-y: auto;
   padding-right: 4px;
 }
+/* Square thumbnail via the padding-bottom trick (percentage padding is
+   based on the element's WIDTH, so this is a reliable way to force a
+   square regardless of grid/aspect-ratio quirks) — the image is then
+   absolutely positioned to fill that square and never gets stretched. */
 .pick-tile {
   border-radius: var(--radius-sm);
-  aspect-ratio: 1;
   cursor: pointer;
   border: 3px solid transparent;
   overflow: hidden;
   position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 100%;
+}
+.pick-tile img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 .pick-tile.selected { border-color: var(--pink-deep); }
 .pick-tile .check {
@@ -698,11 +711,6 @@ textarea:focus, input[type=text]:focus { outline: 2px solid var(--pink-deep); ou
 .board-picker-grid .pick-tile:hover {
   transform: scale(1.05);
   border-color: var(--pink-deep);
-}
-.board-picker-grid .pick-tile img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* show the whole photo instead of cropping it to fill the square */
 }
 
 .context-chip {
