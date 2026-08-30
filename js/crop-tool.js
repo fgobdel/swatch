@@ -1,7 +1,7 @@
 // A reusable crop modal: pick where in a photo to keep, inside a
-// fixed-aspect frame, with drag-to-pan (any direction) and a zoom
-// slider. Used both for the board and for finger slots (with a
-// tall 3:5 "nail shaped" frame there).
+// fixed-aspect frame, with drag-to-pan (any direction), a zoom
+// slider, and a tilt slider. Used both for the board and for finger
+// slots (with a tall 3:5 "nail shaped" frame there).
 //
 // Usage:
 //   const blob = await openCropTool({ file, aspect: 3/5, title: "Left Thumb" });
@@ -18,7 +18,7 @@ function openCropTool({ file, aspect, title }) {
     overlay.innerHTML = `
       <div class="modal crop-modal">
         ${title ? `<div class="crop-target">Cropping for: ${title}</div>` : ""}
-        <p>Drag the photo to reposition it, use the slider to zoom.</p>
+        <p>Drag the photo to reposition it, and use the sliders to zoom or straighten it.</p>
         <div class="crop-frame-outer">
           <div class="crop-canvas-wrap" style="aspect-ratio:${aspect};">
             <canvas class="crop-canvas"></canvas>
@@ -28,6 +28,12 @@ function openCropTool({ file, aspect, title }) {
             <input type="range" class="crop-zoom" min="0" max="100" value="0">
             <span>🔍+</span>
           </div>
+          <div class="crop-controls">
+            <span>↺</span>
+            <input type="range" class="crop-tilt" min="-45" max="45" value="0">
+            <span>↻</span>
+          </div>
+          <div class="crop-tilt-value">Tilt: 0°</div>
         </div>
         <div class="crop-footer">
           <button type="button" class="btn btn-secondary crop-cancel">Cancel</button>
@@ -42,52 +48,81 @@ function openCropTool({ file, aspect, title }) {
     canvas.height = OUT_H;
     const ctx = canvas.getContext("2d");
     const zoomSlider = overlay.querySelector(".crop-zoom");
+    const tiltSlider = overlay.querySelector(".crop-tilt");
+    const tiltValueEl = overlay.querySelector(".crop-tilt-value");
 
     const img = new Image();
-    let minScale = 1;
+    let minScale = 1; // scale at which the (unrotated) image just covers the frame
     let scale = 1;
-    let offsetX = 0; // top-left of the drawn image, in canvas px (<= 0)
-    let offsetY = 0;
+    let rotation = 0; // degrees
+    let panX = 0; // image center offset from canvas center, in canvas px
+    let panY = 0;
 
-    function clampOffsets() {
-      const drawnW = img.width * scale;
-      const drawnH = img.height * scale;
-      offsetX = Math.min(0, Math.max(OUT_W - drawnW, offsetX));
-      offsetY = Math.min(0, Math.max(OUT_H - drawnH, offsetY));
+    // How much bigger than "just covers the frame" the image needs to be
+    // drawn at a given rotation so rotating it never exposes a corner.
+    function minScaleForRotation(deg) {
+      const rad = (deg * Math.PI) / 180;
+      const c = Math.abs(Math.cos(rad));
+      const s = Math.abs(Math.sin(rad));
+      const neededW = OUT_W * c + OUT_H * s;
+      const neededH = OUT_W * s + OUT_H * c;
+      return Math.max(neededW / img.width, neededH / img.height) * 1.02; // small safety margin
+    }
+
+    function clampPan() {
+      const rad = (rotation * Math.PI) / 180;
+      const c = Math.abs(Math.cos(rad));
+      const s = Math.abs(Math.sin(rad));
+      const hw = (img.width * scale) / 2;
+      const hh = (img.height * scale) / 2;
+      const projHalfW = hw * c + hh * s;
+      const projHalfH = hw * s + hh * c;
+      const maxPanX = Math.max(0, projHalfW - OUT_W / 2);
+      const maxPanY = Math.max(0, projHalfH - OUT_H / 2);
+      panX = Math.min(maxPanX, Math.max(-maxPanX, panX));
+      panY = Math.min(maxPanY, Math.max(-maxPanY, panY));
     }
 
     function draw() {
       ctx.clearRect(0, 0, OUT_W, OUT_H);
-      ctx.drawImage(img, offsetX, offsetY, img.width * scale, img.height * scale);
+      ctx.save();
+      ctx.translate(OUT_W / 2 + panX, OUT_H / 2 + panY);
+      ctx.rotate((rotation * Math.PI) / 180);
+      ctx.drawImage(img, (-img.width * scale) / 2, (-img.height * scale) / 2, img.width * scale, img.height * scale);
+      ctx.restore();
     }
 
-    function setZoom(percent) {
-      const drawnCenterX = OUT_W / 2 - offsetX;
-      const drawnCenterY = OUT_H / 2 - offsetY;
-      const ratioX = drawnCenterX / (img.width * scale);
-      const ratioY = drawnCenterY / (img.height * scale);
+    function applyZoom(percent) {
+      const base = minScaleForRotation(rotation);
+      scale = base * (1 + (percent / 100) * 6); // up to 7x the "just covers" size
+      clampPan();
+      draw();
+    }
 
-      scale = minScale * (1 + (percent / 100) * 2); // up to 3x cover
-      offsetX = OUT_W / 2 - ratioX * img.width * scale;
-      offsetY = OUT_H / 2 - ratioY * img.height * scale;
-      clampOffsets();
+    function applyTilt(deg) {
+      rotation = deg;
+      tiltValueEl.textContent = `Tilt: ${deg}°`;
+      const minAtThisAngle = minScaleForRotation(deg);
+      if (scale < minAtThisAngle) scale = minAtThisAngle; // never let a corner show
+      clampPan();
       draw();
     }
 
     const reader = new FileReader();
     reader.onload = () => {
       img.onload = () => {
-        minScale = Math.max(OUT_W / img.width, OUT_H / img.height);
+        minScale = minScaleForRotation(0);
         scale = minScale;
-        offsetX = (OUT_W - img.width * scale) / 2;
-        offsetY = (OUT_H - img.height * scale) / 2;
+        panX = 0;
+        panY = 0;
         draw();
       };
       img.src = reader.result;
     };
     reader.readAsDataURL(file);
 
-    zoomSlider.addEventListener("input", () => setZoom(Number(zoomSlider.value)));
+    zoomSlider.addEventListener("input", () => applyZoom(Number(zoomSlider.value)));
+    tiltSlider.addEventListener("input", () => applyTilt(Number(tiltSlider.value)));
 
     // Drag to pan — works for mouse and touch, in every direction.
     let dragging = false;
@@ -112,11 +147,11 @@ function openCropTool({ file, aspect, title }) {
       if (!dragging) return;
       e.preventDefault();
       const p = pointerPos(e);
-      offsetX += p.x - lastX;
-      offsetY += p.y - lastY;
+      panX += p.x - lastX;
+      panY += p.y - lastY;
       lastX = p.x;
       lastY = p.y;
-      clampOffsets();
+      clampPan();
       draw();
     }
     function dragEnd() {

@@ -759,6 +759,13 @@ textarea:focus, input[type=text]:focus { outline: 2px solid var(--pink-deep); ou
   color: var(--pink-text);
   margin-bottom: 24px;
 }
+.crop-tilt-value {
+  color: #f1e6df;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: 6px;
+  opacity: 0.8;
+}
 
 /* -------------------- New set form -------------------- */
 .form-card {
