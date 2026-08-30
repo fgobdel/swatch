@@ -792,20 +792,21 @@ textarea:focus, input[type=text]:focus { outline: 2px solid var(--pink-deep); ou
 .form-actions { display: flex; gap: 10px; margin-top: 26px; }
 .form-actions .btn { flex: 1; }
 
-/* -------------------- Footer note (mockup badge) -------------------- */
-.mockup-badge {
+/* -------------------- "Saving…" toast -------------------- */
+.save-status {
   position: fixed;
   bottom: 16px;
   right: 16px;
   background: var(--ink);
   color: #fff;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   font-weight: 700;
-  padding: 7px 14px;
+  padding: 9px 16px;
   border-radius: 999px;
-  opacity: 0.72;
+  opacity: 0.92;
   z-index: 999;
   letter-spacing: 0.02em;
+  box-shadow: var(--shadow);
 }
 
 /* -------------------- Scrollbar-ish niceties -------------------- */
