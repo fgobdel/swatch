@@ -41,20 +41,23 @@
         return `
         <div class="finger-slot">
           <div class="slot-label">${FINGER_LABELS[key]}</div>
-          <label class="slot-frame ${filled ? "" : "empty"}" data-key="${key}">
+          <div class="slot-frame ${filled ? "" : "empty"}" data-key="${key}" role="button" tabindex="0">
             ${
               filled
                 ? `<img class="ph" src="${publicUrlFor(slot.image_path)}" style="height:100%;" alt="">
                    <div class="slot-overlay"><span>Change photo</span></div>`
                 : `<span class="plus">+</span>`
             }
-            <input type="file" accept="image/*" data-key="${key}" class="file-input-hidden">
-          </label>
+          </div>
+          <input type="file" accept="image/*" data-key="${key}" class="file-input-hidden">
           <input type="text" class="slot-note" data-key="${key}" placeholder="note for this nail…" value="${(slot && slot.note) ? escapeAttr(slot.note) : ""}">
         </div>`;
       })
       .join("");
 
+    container.querySelectorAll(".slot-frame").forEach((frame) => {
+      frame.addEventListener("click", () => openSlotSourceChoice(frame.dataset.key));
+    });
     container.querySelectorAll('input[type=file]').forEach((input) => {
       input.addEventListener("change", () => handleSlotUpload(input.dataset.key, input.files[0]));
     });
@@ -91,6 +94,70 @@
     renderRow(rightRow, FINGER_KEYS.slice(5, 10));
   }
 
+  // Small "Upload New Photo" / "Choose from Board" chooser shown when a
+  // finger slot is clicked.
+  function openSlotSourceChoice(fingerKey) {
+    const overlay = document.createElement("div");
+    overlay.className = "backdrop";
+    overlay.innerHTML = `
+      <div class="modal" style="max-width:340px;">
+        <h2 style="margin-bottom:18px;">Add a photo</h2>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button type="button" class="btn btn-primary btn-block choice-upload">📷 Upload New Photo</button>
+          <button type="button" class="btn btn-secondary btn-block choice-board">🌸 Choose from Board</button>
+          <button type="button" class="btn btn-ghost btn-block choice-cancel">Cancel</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    overlay.querySelector(".choice-cancel").addEventListener("click", () => overlay.remove());
+    overlay.querySelector(".choice-upload").addEventListener("click", () => {
+      overlay.remove();
+      document.querySelector(`input[type=file][data-key="${fingerKey}"]`).click();
+    });
+    overlay.querySelector(".choice-board").addEventListener("click", async () => {
+      overlay.remove();
+      openBoardPicker(fingerKey);
+    });
+  }
+
+  // Grid of the user's board images to pick one from for this finger slot.
+  async function openBoardPicker(fingerKey) {
+    const overlay = document.createElement("div");
+    overlay.className = "backdrop";
+    overlay.innerHTML = `
+      <div class="modal" style="max-width:520px;">
+        <h2 style="margin-bottom:6px;">Choose from Board</h2>
+        <p>Pick a saved design to use for ${FINGER_LABELS[fingerKey]}.</p>
+        <div class="pick-grid board-picker-grid" style="margin-bottom:20px;">Loading…</div>
+        <button type="button" class="btn btn-ghost btn-block board-picker-cancel">Cancel</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector(".board-picker-cancel").addEventListener("click", () => overlay.remove());
+
+    const grid = overlay.querySelector(".board-picker-grid");
+    try {
+      const images = await listBoardImages(session.id);
+      if (!images.length) {
+        grid.innerHTML = `<p style="grid-column:1/-1;">Your board is empty — upload a new photo instead.</p>`;
+        return;
+      }
+      grid.innerHTML = images
+        .map((img) => `<div class="pick-tile" data-url="${publicUrlFor(img.image_path)}"><img class="ph" style="height:100%;" src="${publicUrlFor(img.image_path)}" alt=""></div>`)
+        .join("");
+      grid.querySelectorAll(".pick-tile").forEach((tile) => {
+        tile.addEventListener("click", async () => {
+          const url = tile.dataset.url;
+          overlay.remove();
+          await handleSlotFromBoardImage(fingerKey, url);
+        });
+      });
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML = `<p style="grid-column:1/-1;">Couldn't load your board: ${err.message || "unknown error"}</p>`;
+    }
+  }
+
   async function handleSlotUpload(fingerKey, file) {
     if (!file) return;
     const frame = document.querySelector(`.slot-frame[data-key="${fingerKey}"]`);
@@ -107,6 +174,25 @@
     } catch (err) {
       console.error(err);
       alert("Upload failed: " + (err.message || "unknown error") + "\n\nCheck your connection and try again.");
+      if (frame) frame.style.opacity = "1";
+    }
+  }
+
+  // Same as handleSlotUpload, but the source is a photo already on the
+  // board — so we don't also re-save a copy back to the board.
+  async function handleSlotFromBoardImage(fingerKey, imageUrl) {
+    const frame = document.querySelector(`.slot-frame[data-key="${fingerKey}"]`);
+    try {
+      const blob = await openCropTool({ imageUrl, aspect: 3 / 5, title: FINGER_LABELS[fingerKey] });
+      if (!blob) return; // cancelled
+
+      if (frame) frame.style.opacity = "0.5";
+      await setSlotImageFromBlob(session.id, setId, fingerKey, blob);
+      set = await getSet(setId);
+      render();
+    } catch (err) {
+      console.error(err);
+      alert("Couldn't use that photo: " + (err.message || "unknown error"));
       if (frame) frame.style.opacity = "1";
     }
   }

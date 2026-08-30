@@ -5,11 +5,13 @@
 // leaves a corner of the frame uncovered, it just shows a soft
 // background there rather than a hard edge.
 //
-// Usage:
+// Usage (a freshly picked file):
 //   const blob = await openCropTool({ file, aspect: 3/5, title: "Left Thumb" });
+// Usage (an existing photo already saved somewhere, e.g. the board):
+//   const blob = await openCropTool({ imageUrl, aspect: 3/5, title: "Left Thumb" });
 //   if (blob) { ...upload blob... }   // null means the user cancelled
 
-function openCropTool({ file, aspect, title }) {
+function openCropTool({ file, imageUrl, aspect, title }) {
   return new Promise((resolve) => {
     // Internal canvas resolution (the actual exported image size).
     const OUT_W = 480;
@@ -98,18 +100,24 @@ function openCropTool({ file, aspect, title }) {
       draw();
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      img.onload = () => {
-        coverScale = Math.max(OUT_W / img.width, OUT_H / img.height);
-        scale = coverScale;
-        panX = 0;
-        panY = 0;
-        draw();
-      };
-      img.src = reader.result;
+    img.onload = () => {
+      coverScale = Math.max(OUT_W / img.width, OUT_H / img.height);
+      scale = coverScale;
+      panX = 0;
+      panY = 0;
+      draw();
     };
-    reader.readAsDataURL(file);
+
+    if (imageUrl) {
+      img.crossOrigin = "anonymous"; // needed so the canvas can export a photo loaded from a URL
+      img.src = imageUrl;
+    } else {
+      const reader = new FileReader();
+      reader.onload = () => {
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    }
 
     zoomSlider.addEventListener("input", () => applyZoom(Number(zoomSlider.value)));
     tiltSlider.addEventListener("input", () => applyTilt(Number(tiltSlider.value)));
