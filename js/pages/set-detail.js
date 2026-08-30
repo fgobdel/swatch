@@ -48,7 +48,7 @@
                    <div class="slot-overlay"><span>Change photo</span></div>`
                 : `<span class="plus">+</span>`
             }
-            <input type="file" accept="image/*" data-key="${key}" style="display:none;">
+            <input type="file" accept="image/*" data-key="${key}" class="file-input-hidden">
           </label>
           <input type="text" class="slot-note" data-key="${key}" placeholder="note for this nail…" value="${(slot && slot.note) ? escapeAttr(slot.note) : ""}">
         </div>`;
@@ -93,12 +93,12 @@
 
   async function handleSlotUpload(fingerKey, file) {
     if (!file) return;
-    const blob = await openCropTool({ file, aspect: 3 / 5, title: FINGER_LABELS[fingerKey] });
-    if (!blob) return; // cancelled
-
     const frame = document.querySelector(`.slot-frame[data-key="${fingerKey}"]`);
-    if (frame) frame.style.opacity = "0.5";
     try {
+      const blob = await openCropTool({ file, aspect: 3 / 5, title: FINGER_LABELS[fingerKey] });
+      if (!blob) return; // cancelled
+
+      if (frame) frame.style.opacity = "0.5";
       const path = await setSlotImageFromBlob(session.id, setId, fingerKey, blob);
       // Uploading straight to a finger slot also saves it to the board, per spec.
       await addBoardImageFromPath(session.id, path);

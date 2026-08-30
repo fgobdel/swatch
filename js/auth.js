@@ -3,6 +3,20 @@
 
 const SESSION_KEY = "swatch_session";
 
+// Last-resort safety net: if something throws or a promise rejects
+// anywhere and nothing else caught it, say so instead of failing
+// silently (which is exactly what makes bugs feel like "nothing
+// happened" instead of something we can actually fix).
+window.addEventListener("error", (e) => {
+  console.error("Unhandled error:", e.error || e.message);
+  alert("Something went wrong: " + (e.message || "unknown error"));
+});
+window.addEventListener("unhandledrejection", (e) => {
+  console.error("Unhandled promise rejection:", e.reason);
+  const msg = e.reason && e.reason.message ? e.reason.message : String(e.reason);
+  alert("Something went wrong: " + msg);
+});
+
 function getSession() {
   try {
     const raw = localStorage.getItem(SESSION_KEY);

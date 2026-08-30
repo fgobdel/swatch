@@ -93,10 +93,10 @@
     if (!files.length) return;
 
     for (const file of files) {
-      const blob = await openCropTool({ file, aspect: 4 / 5 });
-      if (!blob) continue; // user cancelled that one
-      showSaving("Uploading…");
       try {
+        const blob = await openCropTool({ file, aspect: 4 / 5 });
+        if (!blob) continue; // user cancelled that one
+        showSaving("Uploading…");
         const row = await addBoardImageFromBlob(session.id, blob);
         images.push(row);
         render();
