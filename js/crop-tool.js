@@ -1,7 +1,9 @@
 // A reusable crop modal: pick where in a photo to keep, inside a
 // fixed-aspect frame, with drag-to-pan (any direction), a zoom
-// slider, and a tilt slider. Used both for the board and for finger
-// slots (with a tall 3:5 "nail shaped" frame there).
+// slider, and a tilt slider. Zoom and tilt are independent — tilting
+// doesn't change how zoomed in you are. If a tilt + low zoom combo
+// leaves a corner of the frame uncovered, it just shows a soft
+// background there rather than a hard edge.
 //
 // Usage:
 //   const blob = await openCropTool({ file, aspect: 3/5, title: "Left Thumb" });
@@ -25,12 +27,12 @@ function openCropTool({ file, aspect, title }) {
           </div>
           <div class="crop-controls">
             <span>🔍−</span>
-            <input type="range" class="crop-zoom" min="0" max="100" value="0">
+            <input type="range" class="crop-zoom" min="20" max="600" value="100">
             <span>🔍+</span>
           </div>
           <div class="crop-controls">
             <span>↺</span>
-            <input type="range" class="crop-tilt" min="-45" max="45" value="0">
+            <input type="range" class="crop-tilt" min="-180" max="180" value="0">
             <span>↻</span>
           </div>
           <div class="crop-tilt-value">Tilt: 0°</div>
@@ -52,22 +54,11 @@ function openCropTool({ file, aspect, title }) {
     const tiltValueEl = overlay.querySelector(".crop-tilt-value");
 
     const img = new Image();
-    let minScale = 1; // scale at which the (unrotated) image just covers the frame
+    let coverScale = 1; // scale at which the unrotated image just covers the frame — the zoom slider's 100% point
     let scale = 1;
     let rotation = 0; // degrees
     let panX = 0; // image center offset from canvas center, in canvas px
     let panY = 0;
-
-    // How much bigger than "just covers the frame" the image needs to be
-    // drawn at a given rotation so rotating it never exposes a corner.
-    function minScaleForRotation(deg) {
-      const rad = (deg * Math.PI) / 180;
-      const c = Math.abs(Math.cos(rad));
-      const s = Math.abs(Math.sin(rad));
-      const neededW = OUT_W * c + OUT_H * s;
-      const neededH = OUT_W * s + OUT_H * c;
-      return Math.max(neededW / img.width, neededH / img.height) * 1.02; // small safety margin
-    }
 
     function clampPan() {
       const rad = (rotation * Math.PI) / 180;
@@ -85,6 +76,8 @@ function openCropTool({ file, aspect, title }) {
 
     function draw() {
       ctx.clearRect(0, 0, OUT_W, OUT_H);
+      ctx.fillStyle = "#fbe6ee"; // soft pink so an exposed corner (extreme tilt + zoomed out) never looks broken
+      ctx.fillRect(0, 0, OUT_W, OUT_H);
       ctx.save();
       ctx.translate(OUT_W / 2 + panX, OUT_H / 2 + panY);
       ctx.rotate((rotation * Math.PI) / 180);
@@ -93,8 +86,7 @@ function openCropTool({ file, aspect, title }) {
     }
 
     function applyZoom(percent) {
-      const base = minScaleForRotation(rotation);
-      scale = base * (1 + (percent / 100) * 6); // up to 7x the "just covers" size
+      scale = coverScale * (percent / 100);
       clampPan();
       draw();
     }
@@ -102,8 +94,6 @@ function openCropTool({ file, aspect, title }) {
     function applyTilt(deg) {
       rotation = deg;
       tiltValueEl.textContent = `Tilt: ${deg}°`;
-      const minAtThisAngle = minScaleForRotation(deg);
-      if (scale < minAtThisAngle) scale = minAtThisAngle; // never let a corner show
       clampPan();
       draw();
     }
@@ -111,8 +101,8 @@ function openCropTool({ file, aspect, title }) {
     const reader = new FileReader();
     reader.onload = () => {
       img.onload = () => {
-        minScale = minScaleForRotation(0);
-        scale = minScale;
+        coverScale = Math.max(OUT_W / img.width, OUT_H / img.height);
+        scale = coverScale;
         panX = 0;
         panY = 0;
         draw();
