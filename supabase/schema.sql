@@ -55,11 +55,17 @@ alter table board_images enable row level security;
 alter table sets enable row level security;
 alter table set_slots enable row level security;
 
+-- (drop-then-create so this whole file is safe to re-run any time)
+drop policy if exists "profiles read" on profiles;
 create policy "profiles read" on profiles for select using (true);
+drop policy if exists "profiles insert" on profiles;
 create policy "profiles insert" on profiles for insert with check (true);
 
+drop policy if exists "board_images all" on board_images;
 create policy "board_images all" on board_images for all using (true) with check (true);
+drop policy if exists "sets all" on sets;
 create policy "sets all" on sets for all using (true) with check (true);
+drop policy if exists "set_slots all" on set_slots;
 create policy "set_slots all" on set_slots for all using (true) with check (true);
 
 -- ------------------------------------------------------------
@@ -69,18 +75,22 @@ insert into storage.buckets (id, name, public)
 values ('swatch-images', 'swatch-images', true)
 on conflict (id) do nothing;
 
+drop policy if exists "swatch-images public read" on storage.objects;
 create policy "swatch-images public read"
   on storage.objects for select
   using (bucket_id = 'swatch-images');
 
+drop policy if exists "swatch-images public insert" on storage.objects;
 create policy "swatch-images public insert"
   on storage.objects for insert
   with check (bucket_id = 'swatch-images');
 
+drop policy if exists "swatch-images public update" on storage.objects;
 create policy "swatch-images public update"
   on storage.objects for update
   using (bucket_id = 'swatch-images');
 
+drop policy if exists "swatch-images public delete" on storage.objects;
 create policy "swatch-images public delete"
   on storage.objects for delete
   using (bucket_id = 'swatch-images');
