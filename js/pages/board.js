@@ -69,7 +69,7 @@
           await reorderBoardImages(orderedIds);
         } catch (err) {
           console.error(err);
-          alert("Couldn't save the new order — check your connection and try again.");
+          alert("Couldn't save the new order: " + (err.message || "unknown error"));
         } finally {
           hideSaving();
         }
@@ -89,20 +89,23 @@
 
   fileInput.addEventListener("change", async () => {
     const files = [...fileInput.files];
+    fileInput.value = "";
     if (!files.length) return;
-    showSaving(files.length > 1 ? `Uploading ${files.length} images…` : "Uploading…");
-    try {
-      for (const file of files) {
-        const row = await addBoardImageFromFile(session.id, file);
+
+    for (const file of files) {
+      const blob = await openCropTool({ file, aspect: 4 / 5 });
+      if (!blob) continue; // user cancelled that one
+      showSaving("Uploading…");
+      try {
+        const row = await addBoardImageFromBlob(session.id, blob);
         images.push(row);
+        render();
+      } catch (err) {
+        console.error(err);
+        alert("Upload failed: " + (err.message || "unknown error") + "\n\nCheck your connection and try again.");
+      } finally {
+        hideSaving();
       }
-      render();
-    } catch (err) {
-      console.error(err);
-      alert("Upload failed — check your connection and try again.");
-    } finally {
-      hideSaving();
-      fileInput.value = "";
     }
   });
 
@@ -123,7 +126,7 @@
       render();
     } catch (err) {
       console.error(err);
-      alert("Couldn't delete that image — check your connection and try again.");
+      alert("Couldn't delete that image: " + (err.message || "unknown error"));
     } finally {
       hideSaving();
       pendingDeleteId = null;

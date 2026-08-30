@@ -93,17 +93,20 @@
 
   async function handleSlotUpload(fingerKey, file) {
     if (!file) return;
+    const blob = await openCropTool({ file, aspect: 3 / 5, title: FINGER_LABELS[fingerKey] });
+    if (!blob) return; // cancelled
+
     const frame = document.querySelector(`.slot-frame[data-key="${fingerKey}"]`);
     if (frame) frame.style.opacity = "0.5";
     try {
-      const path = await setSlotImageFromFile(session.id, setId, fingerKey, file);
+      const path = await setSlotImageFromBlob(session.id, setId, fingerKey, blob);
       // Uploading straight to a finger slot also saves it to the board, per spec.
       await addBoardImageFromPath(session.id, path);
       set = await getSet(setId);
       render();
     } catch (err) {
       console.error(err);
-      alert("Upload failed — check your connection and try again.");
+      alert("Upload failed: " + (err.message || "unknown error") + "\n\nCheck your connection and try again.");
       if (frame) frame.style.opacity = "1";
     }
   }
@@ -159,7 +162,7 @@
       window.location.href = `set-detail.html?id=${newSet.id}`;
     } catch (err) {
       console.error(err);
-      alert("Couldn't duplicate this set — check your connection and try again.");
+      alert("Couldn't duplicate this set: " + (err.message || "unknown error"));
     }
   });
 
@@ -180,7 +183,7 @@
       window.location.href = "sets.html";
     } catch (err) {
       console.error(err);
-      alert("Couldn't delete this set — check your connection and try again.");
+      alert("Couldn't delete this set: " + (err.message || "unknown error"));
     }
   });
 

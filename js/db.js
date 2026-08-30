@@ -80,6 +80,11 @@ async function addBoardImageFromFile(userId, file) {
   return addBoardImageFromPath(userId, path);
 }
 
+async function addBoardImageFromBlob(userId, blob) {
+  const path = await uploadImageBlob(blob, `${userId}/board`);
+  return addBoardImageFromPath(userId, path);
+}
+
 async function addBoardImageFromPath(userId, path) {
   const { data: existing, error: e1 } = await sb
     .from("board_images")
