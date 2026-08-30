@@ -233,8 +233,20 @@
     }
   });
 
-  document.getElementById("export-btn").addEventListener("click", () => {
-    alert("Export-as-image is coming in the next round of building — hang tight!");
+  document.getElementById("export-btn").addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Preparing…";
+    try {
+      await exportSetAsImage(set);
+    } catch (err) {
+      console.error(err);
+      alert("Couldn't export this set: " + (err.message || "unknown error"));
+    } finally {
+      btn.disabled = false;
+      btn.textContent = originalText;
+    }
   });
 
   document.getElementById("delete-btn").addEventListener("click", () => {

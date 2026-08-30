@@ -840,3 +840,91 @@ textarea:focus, input[type=text]:focus { outline: 2px solid var(--pink-deep); ou
 
 /* -------------------- Scrollbar-ish niceties -------------------- */
 ::selection { background: var(--pink); }
+
+/* -------------------- Export image layout --------------------
+   Rendered off-screen, then rasterized to a PNG for download.
+   These exact pixel values are the approved mockup — don't restyle
+   this casually, it's meant to look right printed on paper. */
+.export-card {
+  position: fixed;
+  left: -99999px;
+  top: 0;
+  width: 1650px;
+  height: 1150px;
+  background: #ffffff;
+  padding: 70px 90px;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Quicksand', sans-serif;
+}
+.export-header {
+  text-align: center;
+  margin-bottom: 36px;
+  border-bottom: 2px solid #222;
+  padding-bottom: 18px;
+  flex-shrink: 0;
+}
+.export-header .set-name {
+  font-weight: 700;
+  font-size: 2.4rem;
+  color: #1a1a1a;
+  letter-spacing: -0.01em;
+}
+.export-header .notes {
+  margin-top: 8px;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+.export-header .notes::before { content: "Notes: "; font-weight: 700; }
+.export-hands-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 46px;
+}
+.export-hand-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1a1a1a;
+  margin-bottom: 22px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+.export-finger-row {
+  display: grid;
+  grid-template-columns: repeat(5, 150px);
+  gap: 60px;
+  justify-content: center;
+}
+.export-finger-card { text-align: center; }
+.export-finger-photo {
+  width: 100%;
+  aspect-ratio: 3/5;
+  overflow: hidden;
+  border: 1.5px solid #1a1a1a;
+  background: #f2f2f2;
+}
+.export-finger-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+.export-finger-name {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+.export-finger-note {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: #555;
+}
+.export-footer {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 0.72rem;
+  color: #999;
+  border-top: 1px solid #ddd;
+  padding-top: 12px;
+  flex-shrink: 0;
+}
