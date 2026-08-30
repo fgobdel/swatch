@@ -94,19 +94,19 @@
     renderRow(rightRow, FINGER_KEYS.slice(5, 10));
   }
 
-  // Small "Upload New Photo" / "Choose from Board" chooser shown when a
-  // finger slot is clicked.
-  function openSlotSourceChoice(fingerKey) {
+  // One combined "add a photo" screen: an Upload button, plus a compact
+  // grid of the whole board right there to pick from directly.
+  async function openSlotSourceChoice(fingerKey) {
     const overlay = document.createElement("div");
     overlay.className = "backdrop";
     overlay.innerHTML = `
-      <div class="modal" style="max-width:340px;">
-        <h2 style="margin-bottom:18px;">Add a photo</h2>
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <button type="button" class="btn btn-primary btn-block choice-upload">📷 Upload New Photo</button>
-          <button type="button" class="btn btn-secondary btn-block choice-board">🌸 Choose from Board</button>
-          <button type="button" class="btn btn-ghost btn-block choice-cancel">Cancel</button>
-        </div>
+      <div class="modal" style="max-width:520px;">
+        <h2 style="margin-bottom:4px;">Add a photo</h2>
+        <p style="margin-bottom:16px;">For ${FINGER_LABELS[fingerKey]}</p>
+        <button type="button" class="btn btn-primary btn-block choice-upload" style="margin-bottom:18px;">📷 Upload New Photo</button>
+        <div style="text-align:left; font-size:0.78rem; font-weight:700; color:var(--ink-faint); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:10px;">— or choose from your board —</div>
+        <div class="pick-grid board-picker-grid" style="margin-bottom:20px;">Loading…</div>
+        <button type="button" class="btn btn-ghost btn-block choice-cancel">Cancel</button>
       </div>`;
     document.body.appendChild(overlay);
 
@@ -115,31 +115,12 @@
       overlay.remove();
       document.querySelector(`input[type=file][data-key="${fingerKey}"]`).click();
     });
-    overlay.querySelector(".choice-board").addEventListener("click", async () => {
-      overlay.remove();
-      openBoardPicker(fingerKey);
-    });
-  }
-
-  // Grid of the user's board images to pick one from for this finger slot.
-  async function openBoardPicker(fingerKey) {
-    const overlay = document.createElement("div");
-    overlay.className = "backdrop";
-    overlay.innerHTML = `
-      <div class="modal" style="max-width:520px;">
-        <h2 style="margin-bottom:6px;">Choose from Board</h2>
-        <p>Pick a saved design to use for ${FINGER_LABELS[fingerKey]}.</p>
-        <div class="pick-grid board-picker-grid" style="margin-bottom:20px;">Loading…</div>
-        <button type="button" class="btn btn-ghost btn-block board-picker-cancel">Cancel</button>
-      </div>`;
-    document.body.appendChild(overlay);
-    overlay.querySelector(".board-picker-cancel").addEventListener("click", () => overlay.remove());
 
     const grid = overlay.querySelector(".board-picker-grid");
     try {
       const images = await listBoardImages(session.id);
       if (!images.length) {
-        grid.innerHTML = `<p style="grid-column:1/-1;">Your board is empty — upload a new photo instead.</p>`;
+        grid.innerHTML = `<p style="grid-column:1/-1;">Your board is empty — upload a new photo above to get started.</p>`;
         return;
       }
       grid.innerHTML = images
